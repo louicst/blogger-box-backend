@@ -1,40 +1,51 @@
 package com.dauphine.blogger_box_backend.models;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "post")
 public class Post {
+
+    @Id
+    @Column(name = "id")
     private UUID id;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "content")
     private String content;
-    private UUID categoryId;
+
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    // Constructeur vide (nécessaire pour Spring)
-    public Post() {}
+    @ManyToOne
+    @JoinColumn(name = "category_id") // Clé étrangère vers la table category
+    private Category category;
 
-    // Constructeur complet (corrige l'erreur de la ligne 32 du Controller)
-    public Post(UUID id, String title, String content, UUID categoryId, LocalDateTime createdDate) {
-        this.id = id;
+    public Post() {
+    }
+
+    // Constructeur pour faciliter la création de nouveaux articles
+    public Post(String title, String content, Category category) {
+        this.id = UUID.randomUUID();
         this.title = title;
         this.content = content;
-        this.categoryId = categoryId;
-        this.createdDate = createdDate;
+        this.createdDate = LocalDateTime.now();
+        this.category = category;
     }
 
-    // Getter manuel (corrige l'erreur de la ligne 25 du Controller)
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    // Autres getters nécessaires pour l'affichage
+    // Getters et Setters pour chaque propriété
     public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
     public String getTitle() { return title; }
-    public String getContent() { return content; }
-    public UUID getCategoryId() { return categoryId; }
-
     public void setTitle(String title) { this.title = title; }
+    public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
-    public void setCategoryId(UUID categoryId) { this.categoryId = categoryId; }
-
+    public LocalDateTime getCreatedDate() { return createdDate; }
+    public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
 }
