@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Lancer Backend (Supabase)",
+            "request": "launch",
+            "mainClass": "com.dauphine.blogger_box_backend.BloggerBoxBackendApplication",
+            "projectName": "blogger-box-backend",
+            "env": {
+                "DB_URL": "jdbc:postgresql://db.mculpmzaqpharlmnkomk.supabase.co:5432/postgres",
+                "DB_USERNAME": "postgres",
+                "DB_PASSWORD": "&@XuqCd9/czd#7+"
+            }
+        }
+    ]
+}
