@@ -23,9 +23,10 @@ public class PostServiceImpl implements PostService {
         this.categoryService = categoryService;
     }
 
+
     @Override
     public List<Post> getAll() {
-        return repository.findAll();
+        return repository.findAllWithCategory(); 
     }
 
     @Override
@@ -63,11 +64,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getAllByCategoryId(UUID categoryId) {
-        return repository.findAll().stream()
-                .filter(p -> p.getCategory().getId().equals(categoryId))
-                .toList();
+        return repository.findAllByCategoryId(categoryId);
     }
-
+    
     @Override
     public List<Post> getAllByTitleOrContent(String value) {
         return repository.findAllByTitleOrContent(value);
