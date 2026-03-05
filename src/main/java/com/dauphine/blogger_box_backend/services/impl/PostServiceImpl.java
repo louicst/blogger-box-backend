@@ -1,5 +1,7 @@
 package com.dauphine.blogger_box_backend.services.impl;
 
+import com.dauphine.blogger_box_backend.exceptions.PostNotFoundByIdException;
+import com.dauphine.blogger_box_backend.exceptions.CategoryNotFoundByIdException;
 import com.dauphine.blogger_box_backend.models.Post;
 import com.dauphine.blogger_box_backend.models.Category;
 import com.dauphine.blogger_box_backend.repositories.PostRepository;
@@ -27,29 +29,27 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post getById(UUID id) {
-        return repository.findById(id).orElse(null);
+    public Post getById(UUID id) throws PostNotFoundByIdException {
+        // Utilisation de orElseThrow pour lever l'exception si l'ID n'existe pas 
+        return repository.findById(id)
+                .orElseThrow(() -> new PostNotFoundByIdException(id));
     }
 
     @Override
-    public Post create(String title, String content, UUID categoryId) {
+    public Post create(String title, String content, UUID categoryId) throws CategoryNotFoundByIdException {
+        // La méthode getById de categoryService lève déjà CategoryNotFoundByIdException [cite: 527]
         Category category = categoryService.getById(categoryId);
-        if (category == null) return null;
 
-        // Utilise le constructeur paramétré de ton modèle
         Post post = new Post(title, content, category);
         return repository.save(post);
     }
 
     @Override
-    public Post update(UUID id, String title, String content) {
-        Post post = getById(id);
-        if (post != null) {
-            post.setTitle(title);
-            post.setContent(content);
-            return repository.save(post);
-        }
-        return null;
+    public Post update(UUID id, String title, String content) throws PostNotFoundByIdException {
+        Post post = getById(id); // Propagera PostNotFoundByIdException si non trouvé [cite: 527]
+        post.setTitle(title);
+        post.setContent(content);
+        return repository.save(post);
     }
 
     @Override
@@ -67,6 +67,7 @@ public class PostServiceImpl implements PostService {
                 .filter(p -> p.getCategory().getId().equals(categoryId))
                 .toList();
     }
+
     @Override
     public List<Post> getAllByTitleOrContent(String value) {
         return repository.findAllByTitleOrContent(value);

@@ -1,5 +1,6 @@
 package com.dauphine.blogger_box_backend.services.impl;
 
+import com.dauphine.blogger_box_backend.exceptions.CategoryNotFoundByIdException;
 import com.dauphine.blogger_box_backend.models.Category;
 import com.dauphine.blogger_box_backend.repositories.CategoryRepository;
 import com.dauphine.blogger_box_backend.services.CategoryService;
@@ -22,10 +23,17 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> getAll() {
         return repository.findAll(); // Récupère tout depuis Supabase
     }
+    @Override
+    public Category getById(UUID id) throws CategoryNotFoundByIdException {
+        return repository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundByIdException(id)); // 
+    }
 
     @Override
-    public Category getById(UUID id) {
-        return repository.findById(id).orElse(null);
+    public Category update(UUID id, String name) throws CategoryNotFoundByIdException {
+        Category category = getById(id); // Va lever l'exception si non trouvé
+        category.setName(name);
+        return repository.save(category);
     }
 
     @Override
@@ -34,16 +42,6 @@ public class CategoryServiceImpl implements CategoryService {
         category.setId(UUID.randomUUID());
         category.setName(name);
         return repository.save(category); // Sauvegarde en base
-    }
-
-    @Override
-    public Category update(UUID id, String name) {
-        Category category = getById(id);
-        if (category != null) {
-            category.setName(name);
-            return repository.save(category);
-        }
-        return null;
     }
 
     @Override

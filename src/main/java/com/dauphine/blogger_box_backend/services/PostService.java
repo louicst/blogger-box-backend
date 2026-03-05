@@ -1,15 +1,18 @@
 package com.dauphine.blogger_box_backend.services;
 
 import com.dauphine.blogger_box_backend.models.Post;
+import com.dauphine.blogger_box_backend.exceptions.PostNotFoundByIdException;
+import com.dauphine.blogger_box_backend.exceptions.CategoryNotFoundByIdException;
+
 import java.util.List;
 import java.util.UUID;
 
 public interface PostService {
-    List<Post> getAllByCategoryId(UUID categoryId);
     List<Post> getAll();
-    Post getById(UUID id);
-    Post create(String title, String content, UUID categoryId);
-    Post update(UUID id, String title, String content);
+    Post getById(UUID id) throws PostNotFoundByIdException;
+    Post create(String title, String content, UUID categoryId) throws CategoryNotFoundByIdException;
+    Post update(UUID id, String title, String content) throws PostNotFoundByIdException;
     boolean deleteById(UUID id);
+    List<Post> getAllByCategoryId(UUID categoryId);
     List<Post> getAllByTitleOrContent(String value);
 }
