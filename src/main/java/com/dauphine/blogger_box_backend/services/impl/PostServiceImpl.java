@@ -23,7 +23,6 @@ public class PostServiceImpl implements PostService {
         this.categoryService = categoryService;
     }
 
-
     @Override
     public List<Post> getAll() {
         return repository.findAllWithCategory(); 
@@ -31,23 +30,20 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post getById(UUID id) throws PostNotFoundByIdException {
-        // Utilisation de orElseThrow pour lever l'exception si l'ID n'existe pas 
         return repository.findById(id)
                 .orElseThrow(() -> new PostNotFoundByIdException(id));
     }
 
     @Override
     public Post create(String title, String content, UUID categoryId) throws CategoryNotFoundByIdException {
-        // La méthode getById de categoryService lève déjà CategoryNotFoundByIdException [cite: 527]
         Category category = categoryService.getById(categoryId);
-
         Post post = new Post(title, content, category);
         return repository.save(post);
     }
 
     @Override
     public Post update(UUID id, String title, String content) throws PostNotFoundByIdException {
-        Post post = getById(id); // Propagera PostNotFoundByIdException si non trouvé [cite: 527]
+        Post post = getById(id);
         post.setTitle(title);
         post.setContent(content);
         return repository.save(post);
