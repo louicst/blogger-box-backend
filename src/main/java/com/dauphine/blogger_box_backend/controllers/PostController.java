@@ -1,42 +1,35 @@
 package com.dauphine.blogger_box_backend.controllers;
-
+import com.dauphine.blogger_box_backend.services.PostService; // Pour trouver l'interface
+import com.dauphine.blogger_box_backend.dto.UpdatePostRequest; 
 import com.dauphine.blogger_box_backend.models.Post;
 import com.dauphine.blogger_box_backend.dto.CreationPostRequest;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
-
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/v1/posts")
 @Tag(name = "Post API")
-@CrossOrigin(origins = "http://localhost:4200")
 public class PostController {
 
-    private final List<Post> posts = new ArrayList<>();
+    private final PostService service;
+
+    public PostController(PostService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    @Operation(summary = "Retrieve all posts ordered by creation date")
-    public List<Post> getAll() {
-        // Tri décroissant pour avoir les plus récents en premier (Page 70)
-        return posts.stream()
-                .sorted(Comparator.comparing(Post::getCreatedDate).reversed())
-                .toList();
+    public List<Post> retrieveAllPosts() {
+        return service.getAll();
     }
 
     @PostMapping
-    @Operation(summary = "Create a new post")
-    public Post create(@RequestBody CreationPostRequest request) {
-        Post post = new Post(
-            UUID.randomUUID(), 
-            request.title(), 
-            request.content(), 
-            request.categoryId(), 
-            LocalDateTime.now()
-        );
-        posts.add(post);
-        return post;
+    public Post createPost(@RequestBody CreationPostRequest request) {
+        return service.create(request.title(), request.content(), request.categoryId());
+    }
+
+    @PutMapping("/{id}")
+    public Post updatePost(@PathVariable UUID id, @RequestBody UpdatePostRequest request) {
+        return service.update(id, request.title(), request.content());
     }
 }
