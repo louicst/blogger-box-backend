@@ -3,6 +3,7 @@ package com.dauphine.blogger_box_backend.models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "post")
@@ -19,6 +20,7 @@ public class Post {
     private String content;
 
     @Column(name = "created_date")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime createdDate;
 
     @ManyToOne
