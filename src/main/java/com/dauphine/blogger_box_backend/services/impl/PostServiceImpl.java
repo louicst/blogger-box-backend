@@ -63,9 +63,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getAllByCategoryId(UUID categoryId) {
-        // Tu pourras ajouter une méthode personnalisée dans PostRepository pour cela
         return repository.findAll().stream()
                 .filter(p -> p.getCategory().getId().equals(categoryId))
                 .toList();
+    }
+    @Override
+    public List<Post> getAllByTitleOrContent(String value) {
+        return repository.findAllByTitleOrContent(value);
     }
 }
